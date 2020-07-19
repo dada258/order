@@ -1,54 +1,160 @@
-{% extends "common/layout_user.html" %}
-{% block content %}
-    <div class="loginColumns animated fadeInDown">
-        <div class="row">
-            <div class="col-md-6 text-center">
-                <h3 class="font-bold">{{ config.SEO_TITLE }}</h3>
-                <div class="row">
-                    <div class="col-xs-6 col-md-6">
-                        <a href="javascript:void(0);" class="thumbnail">
-                            <img src="{{ buildStaticUrl('/images/common/mini_qrcode.jpg') }}" width="200px">
-                        </a>
-                        <p>小程序码</p>
-                    </div>
-                    <div class="col-xs-6 col-md-6">
-                        <a href="javascript:void(0);" class="thumbnail">
-                            <img src="{{ buildStaticUrl('/images/common/qrcode.jpg') }}" width="200px">
-                        </a>
-                        <p>公众号码</p>
-                    </div>
-                </div>
 
-            </div>
-            <div class="col-md-6">
-                <div class="ibox-content">
-                    <div class="m-t login_wrap">
-                        <div class="form-group text-center">
-                            <h2 class="font-bold">登录</h2>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" name="login_name" class="form-control" placeholder="请输入登录用户名">
-                        </div>
-                        <div class="form-group">
-                            <input type="password" name="login_pwd" class="form-control" placeholder="请输入登录密码">
-                        </div>
-                        <button type="button" class="btn btn-primary block full-width m-b do-login">登录</button>
-                        <h3>账号和密码请关注左侧公众号码 回复"<span class="text-danger">订餐小程序</span>"获取，每日更新一次 </h3>
-                    </div>
-                </div>
-            </div>
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>点餐系统后台</title>
+
+<link href="{{ buildStaticUrl('/new/static/css/login.css') }}" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="static/lib/jquery/1.9.1/jquery.min.js"></script> 
+<script src="{{ buildStaticUrl('/new/static/js/verificationNumbers.js') }}" tppabs="{{ buildStaticUrl('/new/static/js/verificationNumbers.js') }}"></script>
+<style>
+.J_codeimg{z-index:-1;position:absolute;}
+</style>
+<script>
+$(document).ready(function() {
+  //验证码
+  createCode();
+});
+</script>
+</head>
+<body>
+<div class="login-box" id="demo">
+   <div class="input-content">
+     <div class="login_tit">
+          <div>
+            <i class="tit-bg left"></i>
+              Everyda · 点餐
+            <i class="tit-bg right"></i>
+          </div>
+          <p>Strive&nbsp;&nbsp;&nbsp;&nbsp;Everyday</p>
+     </div>    
+     <p class="p user_icon">
+       <input type="text" placeholder="账号" autocomplete="off" class="login_txtbx">
+     </p> 
+     <p class="p pwd_icon">
+       <input type="text" placeholder="密码" autocomplete="off" class="login_txtbx">
+     </p>     	
+     <div class="p val_icon">
+        <div class="checkcode">
+          <input type="text" id="J_codetext" placeholder="验证码" autocomplete="off" maxlength="4" class="login_txtbx">
+          <canvas class="J_codeimg" id="myCanvas" onclick="createCode()" onselectstart="return false">对不起，您的浏览器不支持canvas，请下载最新版浏览器!</canvas>
         </div>
-        <hr>
-        <div class="row">
-            <div class="col-md-6">
-                {{ config.SEO_TITLE }} <a href="{{ buildUrl('/') }}" target="_blank"> 技术支持 </a>
-            </div>
-            <div class="col-md-6 text-right">
-                <small>© 2018</small>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-{% block js %}
-    <script src="{{ buildStaticUrl('/js/user/login.js') }}"></script>
-{% endblock %}
+        <a class="ver_btn" onclick="createCode();" onselectstart="return false">看不清，换一张</a>
+      </div>      
+      <div class="signup">
+      	  <a class="gv" href="#" onclick="validate()">登&nbsp;&nbsp;录</a>
+          <a class="gv" href="#">清&nbsp;&nbsp;空</a>
+     </div>
+  </div>
+  <div class="canvaszz"> </div>
+  <canvas id="canvas"></canvas> 
+</div>
+<script>
+//宇宙特效
+"use strict";
+var canvas = document.getElementById('canvas'),
+  ctx = canvas.getContext('2d'),
+  w = canvas.width = window.innerWidth,
+  h = canvas.height = window.innerHeight,
+
+  hue = 217,
+  stars = [],
+  count = 0,
+  maxStars = 2500;//星星数量
+
+var canvas2 = document.createElement('canvas'),
+  ctx2 = canvas2.getContext('2d');
+canvas2.width = 100;
+canvas2.height = 100;
+var half = canvas2.width / 2,
+  gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+gradient2.addColorStop(0.025, '#CCC');
+gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+gradient2.addColorStop(1, 'transparent');
+
+ctx2.fillStyle = gradient2;
+ctx2.beginPath();
+ctx2.arc(half, half, half, 0, Math.PI * 2);
+ctx2.fill();
+
+// End cache
+
+function random(min, max) {
+  if (arguments.length < 2) {
+    max = min;
+    min = 0;
+  }
+
+  if (min > max) {
+    var hold = max;
+    max = min;
+    min = hold;
+  }
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function maxOrbit(x, y) {
+  var max = Math.max(x, y),
+    diameter = Math.round(Math.sqrt(max * max + max * max));
+  return diameter / 2;
+  //星星移动范围，值越大范围越小，
+}
+
+var Star = function() {
+
+  this.orbitRadius = random(maxOrbit(w, h));
+  this.radius = random(60, this.orbitRadius) / 18; 
+  //星星大小
+  this.orbitX = w / 2;
+  this.orbitY = h / 2;
+  this.timePassed = random(0, maxStars);
+  this.speed = random(this.orbitRadius) / 500000; 
+  //星星移动速度
+  this.alpha = random(2, 10) / 10;
+
+  count++;
+  stars[count] = this;
+}
+
+Star.prototype.draw = function() {
+  var x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX,
+    y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY,
+    twinkle = random(10);
+
+  if (twinkle === 1 && this.alpha > 0) {
+    this.alpha -= 0.05;
+  } else if (twinkle === 2 && this.alpha < 1) {
+    this.alpha += 0.05;
+  }
+
+  ctx.globalAlpha = this.alpha;
+  ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+  this.timePassed += this.speed;
+}
+
+for (var i = 0; i < maxStars; i++) {
+  new Star();
+}
+
+function animation() {
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.globalAlpha = 0.5; //尾巴
+  ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 2)';
+  ctx.fillRect(0, 0, w, h)
+
+  ctx.globalCompositeOperation = 'lighter';
+  for (var i = 1, l = stars.length; i < l; i++) {
+    stars[i].draw();
+  };
+
+  window.requestAnimationFrame(animation);
+}
+
+animation();
+</script>
+
+</body>
+</html>
