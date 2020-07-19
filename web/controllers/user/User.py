@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint,request,jsonify,make_response,g,redirect
+from flask import Blueprint, request, jsonify, make_response, g, redirect, url_for
 from common.models.User import ( User )
 from common.libs.user.UserService import ( UserService )
 from common.libs.Helper import ( ops_render )
@@ -15,7 +15,7 @@ def login():
         if g.current_user:
             return  redirect( UrlManager.buildUrl("/") )
         return ops_render( "user/login.html" )
-
+    print("进来了")
     resp = {'code': 200, 'msg': '登录成功~~', 'data': {}}
     req = request.values
     login_name = req['login_name'] if 'login_name' in req else ''
@@ -47,10 +47,12 @@ def login():
         resp['msg'] = "账号已被禁用，请联系管理员处理~~"
         return jsonify(resp)
 
+    # return redirect(url_for('/'))
     response = make_response(json.dumps({'code': 200, 'msg': '登录成功~~'}))
     response.set_cookie( app.config['AUTH_COOKIE_NAME'], '%s#%s' % (
         UserService.geneAuthCode(user_info), user_info.uid),  60 * 60 * 24 * 120)  # 保存120天
-    return response
+    return redirect(url_for('index_page.index'))
+    # return response
 
 @route_user.route( "/edit",methods = [ "GET","POST" ] )
 def edit():

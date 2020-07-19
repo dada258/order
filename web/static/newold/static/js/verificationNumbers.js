@@ -39,6 +39,7 @@ function validate () {
       window.open(document.getElementById("J_down").getAttribute("data-link"));
       document.getElementById("J_codetext").value="";
       createCode();
+      document.getElementById('subform').submit();
       return true;
     }
 
