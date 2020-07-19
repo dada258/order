@@ -15,7 +15,6 @@ def login():
         if g.current_user:
             return  redirect( UrlManager.buildUrl("/") )
         return ops_render( "user/login.html" )
-    print("进来了")
     resp = {'code': 200, 'msg': '登录成功~~', 'data': {}}
     req = request.values
     login_name = req['login_name'] if 'login_name' in req else ''
@@ -24,28 +23,33 @@ def login():
     if  login_name is None or len( login_name ) < 1:
         resp['code'] = -1
         resp['msg'] = "请输入正确的登录用户名~~"
-        return jsonify( resp )
+        # return jsonify( resp )
+        return redirect(url_for('user_page.login'))
 
     if  login_pwd is None or len( login_pwd ) < 1:
         resp['code'] = -1
         resp['msg'] = "请输入正确的邮箱密码~~"
-        return jsonify(resp)
+        # return jsonify(resp)
+        return redirect(url_for('user_page.login'))
 
     user_info = User.query.filter_by( login_name = login_name ).first()
     if not user_info:
         resp['code'] = -1
         resp['msg'] = "请输入正确的登录用户名和密码-1~~"
-        return jsonify(resp)
+        # return jsonify(resp)
+        return redirect(url_for('user_page.login'))
 
     if user_info.login_pwd != UserService.genePwd( login_pwd,user_info.login_salt ):
         resp['code'] = -1
         resp['msg'] = "请输入正确的登录用户名和密码-2~~"
-        return jsonify(resp)
+        # return jsonify(resp)
+        return redirect(url_for('user_page.login'))
 
     if user_info.status != 1:
         resp['code'] = -1
         resp['msg'] = "账号已被禁用，请联系管理员处理~~"
-        return jsonify(resp)
+        # return jsonify(resp)
+        return redirect(url_for('user_page.login'))
 
     # return redirect(url_for('/'))
     response = make_response(redirect(url_for('index_page.index')))
