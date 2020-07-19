@@ -48,11 +48,10 @@ def login():
         return jsonify(resp)
 
     # return redirect(url_for('/'))
-    response = make_response(json.dumps({'code': 200, 'msg': '登录成功~~'}))
+    response = make_response(redirect(url_for('index_page.index')))
     response.set_cookie( app.config['AUTH_COOKIE_NAME'], '%s#%s' % (
         UserService.geneAuthCode(user_info), user_info.uid),  60 * 60 * 24 * 120)  # 保存120天
-    return redirect(url_for('index_page.index'))
-    # return response
+    return response
 
 @route_user.route( "/edit",methods = [ "GET","POST" ] )
 def edit():
